@@ -28,3 +28,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+task slowTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'slow'
+    }
+}
