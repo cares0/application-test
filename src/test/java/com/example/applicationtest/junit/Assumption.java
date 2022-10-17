@@ -1,4 +1,4 @@
-package com.example.applicationtest;
+package com.example.applicationtest.junit;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;

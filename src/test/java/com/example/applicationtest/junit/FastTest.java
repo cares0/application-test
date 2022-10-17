@@ -1,4 +1,4 @@
-package com.example.applicationtest;
+package com.example.applicationtest.junit;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
