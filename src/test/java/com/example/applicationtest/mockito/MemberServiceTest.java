@@ -20,6 +20,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -152,6 +154,7 @@ public class MemberServiceTest {
         when(levelCalculator.calculateMemberLevel(anyInt()))
                 .thenReturn(stubbedMemberLevel);
 
+        // when
         memberService.updateLevel(10L);
 
         // 기본 검증
@@ -164,5 +167,45 @@ public class MemberServiceTest {
         InOrder inOrder = inOrder(levelCalculator);
         inOrder.verify(levelCalculator).calculateMemberLevel(anyInt());
         inOrder.verify(levelCalculator).calculateMemberLevel(anyInt());
+    }
+
+    @Test
+    void bddTest() {
+        // given
+        Long memberId = 10L;
+
+        // stub
+        Integer stubbedMemberAge = 10;
+        MemberLevel stubbedMemberLevel = MemberLevel.JUNIOR;
+        Member stubbedMember = Member.builder()
+                .id(10L)
+                .age(stubbedMemberAge)
+                .build();
+
+//        when(memberRepository.findById(eq(memberId)))
+//                .thenReturn(Optional.of(stubbedMember));
+        given(memberRepository.findById(memberId))
+                .willReturn(Optional.of(stubbedMember));
+
+//        when(levelCalculator.calculateMemberLevel(intThat(new AgeLt30Matcher())))
+//                .thenReturn(stubbedMemberLevel);
+        given(levelCalculator.calculateMemberLevel(stubbedMemberAge))
+                .willReturn(stubbedMemberLevel);
+
+        // when
+        MemberLevel memberLevel = memberService.updateLevel(memberId);
+
+        // then
+        assertThat(memberLevel).isEqualTo(stubbedMemberLevel);
+
+//        verify(memberRepository, times(1)).findById(anyLong());
+//        verifyNoMoreInteractions(memberRepository);
+        then(memberRepository).should(times(1)).findById(anyLong());
+        then(memberRepository).shouldHaveNoMoreInteractions();
+
+//        verify(levelCalculator, times(1)).calculateMemberLevel(anyInt());
+//        verifyNoMoreInteractions(levelCalculator);
+        then(levelCalculator).should(times(1)).calculateMemberLevel(anyInt());
+        then(levelCalculator).shouldHaveNoMoreInteractions();
     }
 }
