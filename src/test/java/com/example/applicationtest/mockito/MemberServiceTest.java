@@ -10,9 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 
 import java.util.Optional;
 
@@ -129,5 +131,38 @@ public class MemberServiceTest {
         // when then
         assertThatThrownBy(() -> memberService.updateLevel(memberId))
                 .isInstanceOf(TransactionException.class);
+    }
+
+    @Test
+    void verifyTest() {
+        // given
+        Long memberId = 10L;
+
+        // stub
+        Integer stubbedMemberAge = 50;
+        MemberLevel stubbedMemberLevel = MemberLevel.JUNIOR;
+        Member stubbedMember = Member.builder()
+                .id(10L)
+                .age(stubbedMemberAge)
+                .build();
+
+        when(memberRepository.findById(eq(memberId)))
+                .thenReturn(Optional.of(stubbedMember));
+
+        when(levelCalculator.calculateMemberLevel(anyInt()))
+                .thenReturn(stubbedMemberLevel);
+
+        memberService.updateLevel(10L);
+
+        // 기본 검증
+        verify(levelCalculator, times(1)).calculateMemberLevel(anyInt()); // 해당 메서드가 1번 실행됐는지
+        verify(levelCalculator, timeout(1000)).calculateMemberLevel(anyInt()); // 해당 메서드가 1000ms 안에 완료되었는지
+        verify(levelCalculator, never()).calculateMemberLevel(anyInt()); // 해당 메서드가 전혀 실행되지 않는지
+        verifyNoInteractions(levelCalculator); // 더 이상 어떤 행위도 수행하지 않는지
+
+        // 순서도 검증
+        InOrder inOrder = inOrder(levelCalculator);
+        inOrder.verify(levelCalculator).calculateMemberLevel(anyInt());
+        inOrder.verify(levelCalculator).calculateMemberLevel(anyInt());
     }
 }
