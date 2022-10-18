@@ -1,0 +1,9 @@
+spring:
+  # DB 설정
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:///member-test
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false

@@ -1,0 +1,1 @@
+$ docker run --name mysql-test -e MYSQL_ROOT_PASSWORD=test -d mysql:8.0
