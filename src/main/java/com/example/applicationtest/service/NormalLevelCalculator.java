@@ -1,7 +1,9 @@
 package com.example.applicationtest.service;
 
 import com.example.applicationtest.domain.MemberLevel;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NormalLevelCalculator implements LevelCalculator {
 
     @Override
